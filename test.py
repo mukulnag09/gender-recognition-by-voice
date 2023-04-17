@@ -177,6 +177,7 @@ def main(file):
     model = create_model()
     # load the saved/trained weights
     model.load_weights("results/model.h5")
+
     if not file or not os.path.isfile(file):
         # if file not provided, or it doesn't exist, use your voice
         print("Please talk")
@@ -185,7 +186,7 @@ def main(file):
         # record the file (start talking)
         record_to_file(file)
 
-    agraph = main(file)
+    
     # extract features and reshape it
 
     features = extract_feature(file, mel=True).reshape(1, -1)

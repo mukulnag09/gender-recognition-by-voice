@@ -3,7 +3,8 @@ from tkinter import *
 import tkinter.font as tfont
 from PIL import Image, ImageTk
 import test as gr  # assuming your gender recognition code is in a file called gender_recognition.py
-
+import analitical_graphs as ag
+import time
 class GenderRecognitionApp:
     def __init__(self, master):
 
@@ -42,21 +43,67 @@ class GenderRecognitionApp:
         self.path_entry = tk.Entry(master, font=self.custom_font)
         self.path_entry.pack(fill=tk.X, padx=20, pady=10)
 
-        self.recognize_button = tk.Button(master, text="Recognize", command=self.recognize_gender, font=self.custom_font, bg=self.custom_bg_color)
+        self.recognize_button = tk.Button(master, text="Recognize", command=lambda:[self.recognize_gender(),self.analitical_graphs()], font=self.custom_font, bg=self.custom_bg_color)
         self.recognize_button.pack(pady=10)
 
         self.gender_label = tk.Label(master, text="",font=self.custom_font, bg=self.custom_bg_color)
         self.gender_label.pack(fill=tk.X, padx=20, pady=10)
 
+        self.recognize_button = tk.Button(master, text="Graphs display", command=lambda:[ self.show_graph(master=master)], font=self.custom_font, bg=self.custom_bg_color)
+        self.recognize_button.pack(pady=10)
+
+        self.gender_label2 = tk.Label(master, text="",font=self.custom_font, bg=self.custom_bg_color)
+        self.gender_label2.pack(fill=tk.X, padx=20, pady=10)
+
         self.clear_button = tk.Button(master, text="Clear", command=self.clear_widgets, font=self.custom_font)
         self.clear_button.pack(pady=10)
         
-        self.image = Image.open("images/spectrum frequency.png")
-        self.photo = ImageTk.PhotoImage(self.image)
-        self.image_label = Label(master, image=self.photo)
-        self.image_label.pack(pady=10)
+        self.image_frame = tk.Frame(master)
+        self.image_frame.pack(fill=tk.BOTH, expand=True)
+        
 
         self.gender_label.bind("<Configure>", self.update_font_size)
+
+
+
+    def analitical_graphs(self):
+        voice_sample_path = self.path_entry.get()
+        gender = ag.main(voice_sample_path)
+        self.gender_label2.configure(text=f"Graphs Ready {gender}")
+
+
+
+    def show_graph(self,master):
+
+
+        self.image_frame = tk.Frame(master)
+        self.image_frame.pack(fill=tk.BOTH, expand=True)
+
+
+        """self.image1 = Image.open("images/spectrum frequency.png")
+        self.photo1 = ImageTk.PhotoImage(self.image1)
+        self.image_label1 = Label(master, image=self.photo1)
+        self.image_label1 = tk.Label(self.image_frame, image=self.photo1)
+        self.image_label1.grid(row=0, column=0, padx=10, pady=10, sticky=tk.NSEW)"""
+
+        self.image2 = Image.open('images/graphs/Signal.png')
+        self.photo2 = ImageTk.PhotoImage(self.image2)
+        self.image_label2 = Label(master, image=self.photo2)
+        self.image_label2 = tk.Label(self.image_frame, image=self.photo2)
+        self.image_label2.grid(row=0, column=0, padx=10, pady=10, sticky=tk.NSEW)
+
+        self.image3 = Image.open('images/graphs/Spectrum.png')
+        self.photo3 = ImageTk.PhotoImage(self.image3)
+        self.image_label3 = Label(master, image=self.photo3)
+        self.image_label3 = tk.Label(self.image_frame, image=self.photo3)
+        self.image_label3.grid(row=0, column=2, padx=10, pady=10, sticky=tk.NSEW)
+
+        # Configure the grid to resize with the window
+        #self.image_frame.columnconfigure(0, weight=1, side=tk.LEFT, expand=True)
+        self.image_frame.columnconfigure(0, weight=1)
+        self.image_frame.columnconfigure(2, weight=1)
+        self.image_frame.rowconfigure(0, weight=1)
+
 
     def recognize_gender(self):
         voice_sample_path = self.path_entry.get()
@@ -66,6 +113,7 @@ class GenderRecognitionApp:
     def clear_widgets(self):
         self.path_entry.delete(0, tk.END)
         self.gender_label.configure(text="")
+        self.gender_label2.configure(text="")
 
     def update_font_size(self, event):
         # update the font size of the gender_label based on its width
